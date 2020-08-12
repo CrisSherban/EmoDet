@@ -6,8 +6,8 @@ from django.db import models
 
 
 class Person(models.Model):
-    person_number = models.IntegerField(primary_key=True)
-    person_emotion = models.CharField(max_length=20)
+    person_number = models.IntegerField()
+    person_emotion = models.CharField(null=True, max_length=20)
     person_last_seen = models.DateTimeField('date_of_emotion', null=True)
     person_prediction_prob = models.FloatField(null=True)
     person_thumbnail = models.ImageField(upload_to="faces_pics/",

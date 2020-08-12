@@ -58,26 +58,53 @@ def predict_emotion(model, inputs, outputs, raw, x, y, w, h):
     return emotion, np.max(res)
 
 
+def plot_emotion_probabilities(emotion_lut, avg_emotions_seen):
+    """
+        we want to represent the mean probability for each emotion in a
+        graph that gets updated after each frame that contains an emotion
+    """
+    plt.title("Average Probabilities of Emotions over Frames")
+    plt.xlabel("Frames")
+    plt.ylabel("Average Emotion")
+
+    plot1 = PlotStats(plot_id=1)
+    plt.grid()
+
+    for i in range(7):
+        if len(Person.objects.filter(person_emotion=emotion_lut[i])) != 0:
+            people_with_emo_i = Person.objects.filter(person_emotion=emotion_lut[i])
+
+            emo_i = [p.person_prediction_prob for p in people_with_emo_i]
+            avg_emotions_seen[i].append(np.average(emo_i))
+        x_axis = np.arange(len(avg_emotions_seen[i]))
+        plt.plot(x_axis, avg_emotions_seen[i], label=str(emotion_lut[i]))
+
+    plt.legend()
+
+    plt.savefig(str(pathlib.Path.home()) +
+                "/Desktop/PPM Project/EmoDet/main/faces_pics/graph1.jpg", bbox_inches='tight')
+    plt.clf()
+    plot1.plot = "graph1.jpg"
+    plot1.save()
+
+
 def main():
     home_dir = pathlib.Path.home()
-    cap = cv2.VideoCapture("wws.mp4")
+    cap = cv2.VideoCapture(0)
     print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
     # ordering the emotions from worst to best in a dictionary
 
     emotion_lut = {
-        "anger": 1,
-        "fear": 2,
-        "disgust": 3,
-        "sadness": 4,
-        "neutral": 5,
-        "happy": 6,
-        "surprised": 7
+        0: "anger",
+        1: "fear",
+        2: "disgust",
+        3: "sadness",
+        4: "neutral",
+        5: "happy",
+        6: "surprised"
     }
-
-    avg_overall = []
-    avg_emotions = []
 
     model = tflite.Interpreter("tfmodels/model_optimized.tflite")
     model.allocate_tensors()
@@ -86,6 +113,8 @@ def main():
 
     # Using HaarCascade classifier
     face_detect = cv2.CascadeClassifier('./haarcascade_frontalface_default.xml')
+
+    emotions_seen = [[] for i in range(7)]
 
     while True:
         frame_emotions = None
@@ -109,16 +138,18 @@ def main():
                                                  minNeighbors=5
                                                  )
             for (x, y, w, h) in faces:
-                frame_emotions = np.zeros((len(faces), 2))
                 face_id += 1
                 cv2.rectangle(image, (x, y), (x + w, y + h), (255, 0, 0), 2)
 
                 prediction, probability = predict_emotion(model, inputs, outputs, image, x, y, w, h)
                 to_display = prediction + ' ' + str(int(probability * 100))
-                frame_emotions[face_id - 1, 0] = emotion_lut[prediction]
-                frame_emotions[face_id - 1, 1] = round((probability * 100), 2)
 
-                if probability > 0.90:
+                if probability > 0.85:
+                    frame_emotions = np.zeros((len(faces), 2))
+                    # frame_emotions contains emotions for column 0 and probability for column 1
+                    frame_emotions[face_id - 1, 0] = get_key(prediction, emotion_lut)
+                    frame_emotions[face_id - 1, 1] = round((probability * 100), 2)
+
                     cv2.putText(image, to_display, (x, y - 5), cv2.FONT_HERSHEY_SIMPLEX,
                                 0.7, (0, 0, 255), 2, cv2.LINE_AA)
 
@@ -126,7 +157,7 @@ def main():
 
                     cv2.imwrite(
                         str(home_dir) + "/Desktop/PPM Project/EmoDet/main/faces_pics/" +
-                        str(face_id) + "_" + str(timestamp) + ".jpg",
+                        str(face_id) + "_" + str(prediction) + "_" + str(timestamp) + ".jpg",
                         image[y:y + h, x:x + w])
 
                     person = Person(person_number=face_id,
@@ -135,48 +166,11 @@ def main():
                                     person_prediction_prob=str(probability * 100)[:4]
                                     )
 
-                    person.person_thumbnail = str(face_id) + "_" + str(timestamp) + ".jpg"
+                    person.person_thumbnail = str(face_id) + "_" + str(prediction) + "_" + str(timestamp) + ".jpg"
                     person.save()
 
             if frame_emotions is not None:
-                average_emotion = round(np.average(frame_emotions[:, 0], weights=frame_emotions[:, 1]))
-                average_emotion = get_key(average_emotion, emotion_lut)
-                avg_emotions.append(average_emotion)
-
-                plot1 = PlotStats(plot_id=1)
-                x_axis = np.arange(0, len(avg_emotions))
-                plt.title("Average Emotions over Frames")
-                plt.xlabel("Frames")
-                plt.ylabel("Average Emotion")
-
-                plt.grid()
-                plt.plot(x_axis, avg_emotions)
-                plt.savefig(str(home_dir) +
-                            "/Desktop/PPM Project/EmoDet/main/faces_pics/graph1.jpg", bbox_inches='tight')
-                plt.clf()
-                plot1.plot = "graph1.jpg"
-                plot1.save()
-
-                plot2 = PlotStats(plot_id=2)
-                sum_tmp = 0
-                for emotion in avg_emotions:
-                    sum_tmp += emotion_lut[emotion]
-
-                average_over_time = round((sum_tmp / len(avg_emotions)))
-                avg_overall.append(get_key(average_over_time, emotion_lut))
-
-                plt.title("Average Emotions over Time")
-                plt.xlabel("Frames")
-                plt.ylabel("Average Emotion")
-
-                plt.grid()
-                plt.plot(x_axis, avg_overall)
-                plt.savefig(str(home_dir) +
-                            "/Desktop/PPM Project/EmoDet/main/faces_pics/graph2.jpg", bbox_inches='tight')
-
-                plot2.plot = "graph2.jpg"
-                plot2.save()
-                plt.clf()
+                plot_emotion_probabilities(emotion_lut, emotions_seen)
 
             cv2.imshow("Faces & Emotions", image)
 

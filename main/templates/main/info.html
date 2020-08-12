@@ -4,16 +4,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-    <!---  This snippet centers the cards if uncommented
-    <style>
-    .row .col{
-      float: none !important;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    </style>
-    --->
 </head>
 
 <body>
@@ -31,7 +21,7 @@
 
 <div class="container center">
     <div class="row">
-        {% for person in latest_faces %}
+        {% for person in persons %}
             <div class="col s12 m4 l3">
                 <div class="card hoverable">
                     <div class="card-image">
@@ -44,25 +34,10 @@
                         <p>Latest Emotion: {{ person.person_emotion }}</p>
                         <p>Prediction Probability: {{ person.person_prediction_prob }}</p>
                         <p>Date: {{ person.person_last_seen }}</p>
-
-                    </div>
-                    <div class="card-action center">
-                        <a href="info">Info</a>
                     </div>
                 </div>
             </div>
         {% endfor %}
     </div>
-    <h4>A few stats</h4><br>
-    {% for plot in stats %}
-        <div class="container center">
-            {% if plot.plot != None %}
-                <img class="responsive-img hoverable" src="{{ plot.plot.url }}" alt="graph">
-                <br><br>
-            {% endif %}
-        </div>
-    {% endfor %}
 </div>
 </body>
-
-

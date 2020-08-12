@@ -21,4 +21,6 @@ app_name = "main"
 
 urlpatterns = [
     path("", views.homepage, name="homepage"),
+    path("info/", views.info, name="info"),
+    path("about/", views.about, name="about")
 ]
