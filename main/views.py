@@ -1,9 +1,10 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from .models import Person, PlotStats, AIPrediction
 from django.db.models.aggregates import Max
 from django.db.models import Q
 from .forms import PersonForm
+import os
 
 
 def homepage(request):
@@ -17,6 +18,19 @@ def homepage(request):
                             & Q(person_frame=pair['person_frame']))
 
         return Person.objects.filter(q_statement)
+
+    if request.method == 'POST' and 'record_cam' in request.POST:
+        os.system("python AI.py cam")
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST' and 'record_test' in request.POST:
+        os.system("python AI.py no_cam")
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST' and 'purge' in request.POST:
+        import purge_data
+        purge_data.purge()
+        return HttpResponseRedirect('/')
 
     return render(request=request,
                   template_name="main/home.html",

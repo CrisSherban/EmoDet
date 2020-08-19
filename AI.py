@@ -3,6 +3,7 @@ import numpy as np
 import tflite_runtime.interpreter as tflite
 import pathlib
 import matplotlib.pyplot as plt
+import sys
 
 import os
 import django
@@ -95,13 +96,14 @@ def plot_histogram(face_id, all_model_results, ai_prediction_django_model):
     ai_prediction_django_model.plot = "hist" + str(face_id) + ".jpg"
 
 
-def main():
+def main(argv):
     home_dir = pathlib.Path.home()
-    cap = cv2.VideoCapture("wws.mp4")
+    if argv[0] == "cam":
+        cap = cv2.VideoCapture(0)
+    else:
+        cap = cv2.VideoCapture("wws.mp4")
     print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-
-    # ordering the emotions from worst to best in a dictionary
 
     emotion_lut = {0: 'anger',
                    1: 'disgust',
@@ -179,7 +181,6 @@ def main():
                 for emotion, probability in zip(np.arange(7), list(all_model_results.values())):
                     model_results[emotion].append(probability)
 
-
                 # adding the predictions to database
                 ai_prediction = AIPrediction(
                     person=person,
@@ -217,4 +218,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])
