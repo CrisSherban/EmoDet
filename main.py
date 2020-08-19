@@ -34,14 +34,14 @@ def get_key(val, my_dict):
     return "key doesn't exist"
 
 
-def predict_emotion(model, inputs, outputs, raw, x, y, w, h, classes_lut):
+def predict_emotion(model, inputs, outputs, raw, x, y, w, h, emotion_lut):
     img = crop_center(raw, x, y, w, h)
     img = preprocess_img(img)
     model.set_tensor(inputs['index'], img.astype(np.float32))
     model.invoke()
     res = model.get_tensor(outputs['index'])
-    emotion = classes_lut[int(np.argmax(res, axis=1))]
-    all_model_results = {classes_lut[i]: round(res[0, i], 2) * 100 for i in range(7)}
+    emotion = emotion_lut[int(np.argmax(res, axis=1))]
+    all_model_results = {emotion_lut[i]: res[0, i] * 100 for i in range(7)}
 
     return emotion, np.max(res), all_model_results
 
@@ -183,13 +183,13 @@ def main():
                 # adding the predictions to database
                 ai_prediction = AIPrediction(
                     person=person,
-                    anger=round(all_model_results["anger"], 4),
-                    disgust=round(all_model_results["disgust"], 4),
-                    fear=round(all_model_results["fear"], 4),
-                    happy=round(all_model_results["happy"], 4),
-                    neutral=round(all_model_results["neutral"], 4),
-                    sadness=round(all_model_results["sadness"], 4),
-                    surprised=round(all_model_results["surprised"], 4)
+                    anger=round(all_model_results["anger"], 2),
+                    disgust=round(all_model_results["disgust"], 2),
+                    fear=round(all_model_results["fear"], 2),
+                    happy=round(all_model_results["happy"], 2),
+                    neutral=round(all_model_results["neutral"], 2),
+                    sadness=round(all_model_results["sadness"], 2),
+                    surprised=round(all_model_results["surprised"], 2)
                 )
                 ai_prediction.plot = "hist" + str(face_id) + ".jpg"
                 ai_prediction.save()
