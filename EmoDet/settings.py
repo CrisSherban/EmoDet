@@ -36,6 +36,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'materializecssform',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -114,5 +117,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-MEDIA_URL = '/main/faces_pics/'
-MEDIA_ROOT = 'main/faces_pics'
+MEDIA_URL = '/main/pics/'
+MEDIA_ROOT = 'main/pics'

@@ -1,19 +1,22 @@
 <head>
+    {% load filters %}
     {% load static %}
+    <script src="{% static "js/jquery-3.5.1.js" %}"></script>
+    <script src="{% static 'js/rango-jquery.js' %}"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
-    <!---  This snippet centers the cards if uncommented
+
     <style>
-    .row .col{
-      float: none !important;
-      margin-left: auto;
-      margin-right: auto;
-    }
+        .flex {
+            display: flex;
+            flex-wrap: wrap;
+        }
     </style>
-    --->
 </head>
 
 <body>
@@ -21,33 +24,68 @@
 <nav>
     <div class="nav-wrapper cyan darken-4">
         <a href="/" class="brand-logo">EmoDet</a>
+        <a href="#" class="sidenav-trigger" data-target="mobile-nav">
+            <i class="material-icons">menu</i>
+        </a>
         <ul id="nav-mobile" class="right  hide-on-med-and-down">
             <li><a href="/">Homepage</a></li>
+            <li><a href="/info">Data</a></li>
             <li><a href="/about">About</a></li>
-            <li><a href="/login">Login</a></li>
+            <li><a href="#">Login</a></li>
         </ul>
     </div>
 </nav>
 
+<ul class="sidenav cyan darken-4 center" id="mobile-nav">
+    <li><a class="white-text" href="/">Home</a></li>
+    <li><a class="white-text" href="/info">Data</a></li>
+    <li><a class="white-text" href="/about">About</a></li>
+    <li><a class="white-text" href="#">Login</a></li>
+</ul>
+
 <div class="container center">
-    <div class="row">
+    <h4>Latest Predictions: </h4>
+    <div class="row flex">
         {% for person in latest_faces %}
             <div class="col s12 m4 l3">
                 <div class="card hoverable">
-                    <div class="card-image">
+                    <div class="card-image ">
                         {% if person.person_thumbnail != None %}
                             <img src="{{ person.person_thumbnail.url }}" alt="face">
                         {% endif %}
+
+                        <button data-target="{{ person.person_number_in_last_frame }}"
+                                class="btn modal-trigger btn-floating halfway-fab waves-effect waves-light red">
+                            <i class="material-icons">info</i>
+                        </button>
+
+                        <div id="{{ person.person_number_in_last_frame }}" class="modal">
+                            <div class="modal-content">
+                                <h4>All model probabilities of this instance</h4><br>
+                                <img class="responsive-img hoverable" src="{{ person.aiprediction.plot.url }}"
+                                     alt="graph"><br><br>
+                                <p>Angry: {{ person.aiprediction.anger }}</p>
+                                <p>Disgust: {{ person.aiprediction.disgust }}</p>
+                                <p>Fear: {{ person.aiprediction.fear }}</p>
+                                <p>Happy: {{ person.aiprediction.happy }}</p>
+                                <p>Neutral: {{ person.aiprediction.neutral }}</p>
+                                <p>Sadness: {{ person.aiprediction.sadness }}</p>
+                                <p>Surprised: {{ person.aiprediction.surprised }}</p>
+                            </div>
+                            <div class="modal-footer">
+                                <a href="#!"
+                                   style="color:white"
+                                   class="modal-close halfway-fab waves-effect waves-light red btn-flat">
+                                    Close
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
                     <div class="card-content">
-                        <span class="card-title">Person {{ person }}</span>
                         <p>Latest Emotion: {{ person.person_emotion }}</p>
                         <p>Prediction Probability: {{ person.person_prediction_prob }}</p>
                         <p>Date: {{ person.person_last_seen }}</p>
-
-                    </div>
-                    <div class="card-action center">
-                        <a href="info">Info</a>
                     </div>
                 </div>
             </div>
@@ -57,7 +95,7 @@
     {% for plot in stats %}
         <div class="container center">
             {% if plot.plot != None %}
-                <img class="responsive-img hoverable" src="{{ plot.plot.url }}" alt="graph">
+                <img id="auto" class="responsive-img hoverable" src="{{ plot.plot.url }}" alt="graph">
                 <br><br>
             {% endif %}
         </div>

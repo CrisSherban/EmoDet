@@ -1,9 +1,14 @@
 <head>
     {% load static %}
+    <script src="{% static "js/jquery-3.5.1.js" %}"></script>
+    <script src="{% static 'js/rango-jquery.js' %}"></script>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <!-- Compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <!-- Compiled and minified JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
 </head>
 
 <body>
@@ -11,32 +16,60 @@
 <nav>
     <div class="nav-wrapper cyan darken-4">
         <a href="/" class="brand-logo">EmoDet</a>
+        <a href="#" class="sidenav-trigger" data-target="mobile-nav">
+            <i class="material-icons">menu</i>
+        </a>
         <ul id="nav-mobile" class="right  hide-on-med-and-down">
             <li><a href="/">Homepage</a></li>
+            <li><a href="/info">Data</a></li>
             <li><a href="/about">About</a></li>
-            <li><a href="/login">Login</a></li>
+            <li><a href="#">Login</a></li>
         </ul>
     </div>
 </nav>
 
+<ul class="sidenav cyan darken-4 center" id="mobile-nav">
+    <li><a class="white-text" href="/">Home</a></li>
+    <li><a class="white-text" href="/info">Data</a></li>
+    <li><a class="white-text" href="/about">About</a></li>
+    <li><a class="white-text" href="#">Login</a></li>
+</ul>
+
+
+
 <div class="container center">
-    <h3>What is EmoDet: </h3>
-    <p>
-        EmoDet is an Emotion Detection system made in Python
+    <div class="row">
+        <div class="col s12">
+            <h4 class="header">What is EmoDet:</h4>
+            <div class="card-panel teal">
+        <span class="white-text">EmoDet is an Emotion Detection system made in Python
         with the usage of a Tensorflow Light model and Django
         for its web application.
-    </p>
-    <h3>What are the target platforms: </h3>
-    <p>
-        Essentially Mobile, originary made for RaspberryPI 4
-    </p>
+        </span>
+            </div>
+        </div>
+    </div>
 
-    <h3>About the author: </h3>
-    <p>
-        Serban Cristian Tudosie:
-        Computer Engineering student, maker and enthusiast
-        Florence, Italy
-    </p>
+    <div class="row">
+        <div class="col s12">
+            <h4 class="header">What's the target platform?</h4>
+            <div class="card-panel teal">
+                <span class="white-text">Essentially Mobile, originally made for RaspberryPI 4</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12">
+            <h4 class="header">About the author:</h4>
+            <div class="card-panel teal">
+        <span class="white-text">Serban Cristian Tudosie: <br>
+        Computer Engineering student, maker and enthusiast<br>
+        Florence, Italy<br>
+        </span>
+            </div>
+        </div>
+    </div>
 </div>
 
 
