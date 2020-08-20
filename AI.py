@@ -14,6 +14,14 @@ django.setup()
 
 from main.models import Person, PlotStats, AIPrediction
 
+color_lut = {'anger': '#A1000E',
+             'disgust': 'y',
+             'fear': 'violet',
+             'happy': 'green',
+             'neutral': '#916CAF',
+             'sadness': 'black',
+             'surprised': '#5081A1'}
+
 
 def crop_center(img, x, y, w, h):
     return img[y:y + h, x:x + w]
@@ -47,11 +55,7 @@ def predict_emotion(model, inputs, outputs, raw, x, y, w, h, emotion_lut):
     return emotion, np.max(res), all_model_results
 
 
-def plot_emotion_probabilities(emotion_lut, scene_mood):
-    """
-        we want to represent the mean probability for each emotion in a
-        graph that gets updated after each frame that contains an emotion
-    """
+def plot_emotion_probabilities(emotion_lut, scene_mood, frames):
     plt.title("Mood of the scene")
     plt.xlabel("Frames")
     plt.ylabel("Average of each emotion")
@@ -64,10 +68,10 @@ def plot_emotion_probabilities(emotion_lut, scene_mood):
         if len(scene_mood[i]) > max_dim:
             max_dim = len(scene_mood[i])
 
-    x_axis = np.arange(max_dim)
+    x_axis = np.arange(frames)
 
     for i in range(7):
-        plt.plot(x_axis, scene_mood[i], label=str(emotion_lut[i]))
+        plt.plot(x_axis, scene_mood[i], label=str(emotion_lut[i]), color=color_lut[emotion_lut[i]])
 
     plt.legend()
 
@@ -79,7 +83,7 @@ def plot_emotion_probabilities(emotion_lut, scene_mood):
 
 
 def plot_histogram(face_id, all_model_results, ai_prediction_django_model):
-    plt.bar(list(all_model_results.keys()), all_model_results.values(), color='g')
+    plt.bar(list(all_model_results.keys()), all_model_results.values(), color=list(color_lut.values()))
     plt.grid(axis='y', alpha=0.75)
     plt.xlabel('Emotions')
     plt.ylabel('Probability')
@@ -98,10 +102,15 @@ def plot_histogram(face_id, all_model_results, ai_prediction_django_model):
 
 def main(argv):
     home_dir = pathlib.Path.home()
-    if argv[0] == "cam":
-        cap = cv2.VideoCapture(0)
+    if len(argv) != 0:
+        if argv[0] == "cam":
+            cap = cv2.VideoCapture(0)
+        else:
+            cap = cv2.VideoCapture("wws.mp4")
+
     else:
         cap = cv2.VideoCapture("wws.mp4")
+
     print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
@@ -202,9 +211,13 @@ def main(argv):
             if face_detected:
                 for i in range(len(scene_mood)):
                     scene_mood[i].append(np.average(model_results[i]))
-                plot_emotion_probabilities(emotion_lut, scene_mood)
+            else:
+                for i in range(len(scene_mood)):
+                    scene_mood[i].append(None)
 
-            # print(scene_mood)
+            plot_emotion_probabilities(emotion_lut, scene_mood, num_frames)
+
+            print(scene_mood)
 
             cv2.imshow("Faces & Emotions", image)
 

@@ -1,4 +1,5 @@
 <head>
+    {% load materializecss %}
     {% load static %}
     <script src="{% static "js/jquery-3.5.1.js" %}"></script>
     <script src="{% static 'js/rango-jquery.js' %}"></script>
@@ -25,12 +26,14 @@
             flex: 1 0 auto;
         }
     </style>
-    <title>EmoDet About</title>
+    <title>EmoDet Data</title>
 
 </head>
 
+
 <body>
 
+<!--NAVBAR--->
 <div class="navbar-fixed">
     <nav>
         <div class="nav-wrapper cyan darken-4">
@@ -55,43 +58,54 @@
     <li><a class="white-text" href="#">Login</a></li>
 </ul>
 
-
 <main>
-    <div class="container center">
-        <div class="row">
-            <div class="col s12">
-                <h4 class="header">What is EmoDet:</h4>
-                <div class="card-panel teal">
-        <span class="white-text">EmoDet is an Emotion Detection system made in Python
-        with the usage of a Tensorflow Light model and Django
-        for its web application.
-        </span>
+    <div class="container">
+        <div class="row flex">
+            <div class="col m3 l3">
+                <br><br>
+                <div class="container">
+                    <form class="align-left" action="" method="POST">
+                        {% csrf_token %}
+                        <table>
+                            {{ form|materializecss }}
+                        </table>
+                        <button type="submit" style="color:white"
+                                class="waves-effect waves light btn-large">Apply
+                        </button>
+                    </form>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col s12">
-                <h4 class="header">What's the target platform?</h4>
-                <div class="card-panel teal">
-                    <span class="white-text">Essentially Mobile, originally made for RaspberryPI 4</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col s12">
-                <h4 class="header">About the author:</h4>
-                <div class="card-panel teal">
-        <span class="white-text">Serban Cristian Tudosie: <br>
-        Computer Engineering student, maker and enthusiast<br>
-        Florence, Italy<br>
-        </span>
+            <div class="col m9 l9">
+                <div class="row flex">
+                    {% for person in persons %}
+                        <div class="col s12 m4 l4">
+                            <div class="card hoverable">
+                                <div class="card-image">
+                                    {% if person.person_thumbnail != None %}
+                                        <img src="{{ person.person_thumbnail.url }}" alt="face">
+                                    {% endif %}
+                                </div>
+                                <div class="card-content">
+                                    <p>Frame Number:{{ person.person_frame }}</p>
+                                    <p>Emotion: {{ person.person_emotion }}</p>
+                                    <p>Prediction: {{ person.person_prediction_prob }}</p>
+                                    <p>Date: {{ person.person_last_seen }}</p>
+                                    {% if person.aiprediction.plot != None %}
+                                        <img class="materialboxed responsive-img hoverable"
+                                             src="{{ person.aiprediction.plot.url }}"
+                                             alt="graph">
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
     </div>
 </main>
+
 
 <!-- FOOTER --->
 <footer class="page-footer cyan darken-4">
@@ -125,5 +139,4 @@
     </div>
 
 </footer>
-
 </body>

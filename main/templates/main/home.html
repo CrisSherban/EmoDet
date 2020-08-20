@@ -16,7 +16,19 @@
             display: flex;
             flex-wrap: wrap;
         }
+
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1 0 auto;
+        }
     </style>
+
+    <title>EmoDet</title>
 </head>
 
 <body>
@@ -30,7 +42,7 @@
             </a>
             <ul id="nav-mobile" class="right  hide-on-med-and-down">
                 <li><a href="/">Homepage</a></li>
-                <li><a href="/info">Data</a></li>
+                <li><a href="/data">Data</a></li>
                 <li><a href="/about">About</a></li>
                 <li><a href="#">Login</a></li>
             </ul>
@@ -39,108 +51,144 @@
 </div>
 <ul class="sidenav cyan darken-4 center" id="mobile-nav">
     <li><a class="white-text" href="/">Home</a></li>
-    <li><a class="white-text" href="/info">Data</a></li>
+    <li><a class="white-text" href="/data">Data</a></li>
     <li><a class="white-text" href="/about">About</a></li>
     <li><a class="white-text" href="#">Login</a></li>
 </ul>
 
 <br><br>
 
-<div class="container center">
-    <div class="row flex">
-        <div class="col s12">
-            <form method="POST">
-                {% csrf_token %}
-                <button class="btn"
-                        type="submit" name="record_cam">Record with WEBCAM
-                    <i class="material-icons">camera_alt</i>
-                </button>
-            </form>
-        </div>
-        <div class="col s12">
-            <form method="POST">
-                {% csrf_token %}
-                <button class="btn"
-                        type="submit" name="record_test">Movie scene TEST
-                    <i class="material-icons">movie</i>
-                </button>
-            </form>
-        </div>
-        <div class="col s12">
-            <form method="POST">
-                {% csrf_token %}
-                <button class="btn-large"
-                        type="submit" name="purge">Purge Database
-                </button>
-            </form>
+<main>
+    <div class="container center">
+        <div class="row flex">
+            <div class="col s12">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn"
+                            type="submit" name="record_cam">Record with WEBCAM
+                        <i class="material-icons">camera_alt</i>
+                    </button>
+                </form>
+            </div>
+            <div class="col s12">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn"
+                            type="submit" name="record_test">Movie scene TEST
+                        <i class="material-icons">movie</i>
+                    </button>
+                </form>
+            </div>
+            <div class="col s12">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn-large"
+                            type="submit" name="purge">Purge Database
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
-</div>
 
 
-<div class="container center">
-    {% if persons.count != 0 %}
-        <h4>Latest Predictions: </h4>
-    {% endif %}
-    <div class="row flex">
-        {% for person in latest_faces %}
-            <div class="col s12 m4 l3">
-                <div class="card hoverable">
-                    <div class="card-image ">
-                        {% if person.person_thumbnail != None %}
-                            <img src="{{ person.person_thumbnail.url }}" alt="face">
-                        {% endif %}
+    <div class="container center">
+        {% if persons.count != 0 %}
+            <h4>Latest Predictions: </h4>
+        {% endif %}
+        <div class="row flex">
+            {% for person in latest_faces %}
+                <div class="col s12 m4 l3">
+                    <div class="card hoverable">
+                        <div class="card-image ">
+                            {% if person.person_thumbnail != None %}
+                                <img src="{{ person.person_thumbnail.url }}" alt="face">
+                            {% endif %}
 
-                        <button data-target="{{ person.person_number_in_last_frame }}"
-                                class="btn modal-trigger btn-floating halfway-fab waves-effect waves-light red">
-                            <i class="material-icons">info</i>
-                        </button>
+                            <button data-target="{{ person.person_number_in_last_frame }}"
+                                    class="btn modal-trigger btn-floating halfway-fab waves-effect waves-light red">
+                                <i class="material-icons">info</i>
+                            </button>
 
-                        <div id="{{ person.person_number_in_last_frame }}" class="modal">
-                            <div class="modal-content">
-                                <h4>All model probabilities of this instance</h4><br>
-                                <img class="responsive-img hoverable" src="{{ person.aiprediction.plot.url }}"
-                                     alt="graph"><br><br>
-                                <p>Angry: {{ person.aiprediction.anger }}</p>
-                                <p>Disgust: {{ person.aiprediction.disgust }}</p>
-                                <p>Fear: {{ person.aiprediction.fear }}</p>
-                                <p>Happy: {{ person.aiprediction.happy }}</p>
-                                <p>Neutral: {{ person.aiprediction.neutral }}</p>
-                                <p>Sadness: {{ person.aiprediction.sadness }}</p>
-                                <p>Surprised: {{ person.aiprediction.surprised }}</p>
+                            <div id="{{ person.person_number_in_last_frame }}" class="modal">
+                                <div class="modal-content">
+                                    <h4>All model probabilities of this instance</h4><br>
+                                    <img class="responsive-img hoverable" src="{{ person.aiprediction.plot.url }}"
+                                         alt="graph"><br><br>
+                                    <p>Angry: {{ person.aiprediction.anger }}</p>
+                                    <p>Disgust: {{ person.aiprediction.disgust }}</p>
+                                    <p>Fear: {{ person.aiprediction.fear }}</p>
+                                    <p>Happy: {{ person.aiprediction.happy }}</p>
+                                    <p>Neutral: {{ person.aiprediction.neutral }}</p>
+                                    <p>Sadness: {{ person.aiprediction.sadness }}</p>
+                                    <p>Surprised: {{ person.aiprediction.surprised }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="#!"
+                                       style="color:white"
+                                       class="modal-close halfway-fab waves-effect waves-light red btn-flat">
+                                        Close
+                                    </a>
+                                </div>
                             </div>
-                            <div class="modal-footer">
-                                <a href="#!"
-                                   style="color:white"
-                                   class="modal-close halfway-fab waves-effect waves-light red btn-flat">
-                                    Close
-                                </a>
-                            </div>
+
                         </div>
-
-                    </div>
-                    <div class="card-content">
-                        <p>Latest Emotion: {{ person.person_emotion }}</p>
-                        <p>Prediction Probability: {{ person.person_prediction_prob }}</p>
-                        <p>Date: {{ person.person_last_seen }}</p>
+                        <div class="card-content">
+                            <p>Latest Emotion: {{ person.person_emotion }}</p>
+                            <p>Prediction Probability: {{ person.person_prediction_prob }}</p>
+                            <p>Date: {{ person.person_last_seen }}</p>
+                        </div>
                     </div>
                 </div>
+            {% endfor %}
+        </div>
+
+        {% if persons.count != 0 %}
+            <h4>A few stats</h4><br>
+        {% endif %}
+        {% for plot in stats %}
+            <div class="container center">
+                {% if plot.plot != None %}
+                    <img id="auto" class="responsive-img hoverable" src="{{ plot.plot.url }}" alt="graph">
+                    <br><br>
+                {% endif %}
             </div>
         {% endfor %}
     </div>
+</main>
 
-    {% if persons.count != 0 %}
-        <h4>A few stats</h4><br>
-    {% endif %}
-    {% for plot in stats %}
-        <div class="container center">
-            {% if plot.plot != None %}
-                <img id="auto" class="responsive-img hoverable" src="{{ plot.plot.url }}" alt="graph">
-                <br><br>
-            {% endif %}
+<!-- FOOTER --->
+<footer class="page-footer cyan darken-4">
+    <div class="container ">
+        <div class="row">
+            <div class="col l6 s12">
+                <img class="responsive-img" src="{% static "logos/logo.png" %}" alt="logo">
+
+            </div>
+            <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                    <li>
+                        <a class="white-text text-lighten-3" href="#!">
+                            Facebook
+                        </a>
+                    </li>
+                    <li>
+                        <a class="white-text text-lighten-3" href="#!">
+                            Instagram
+                        </a>
+                    </li>
+                    <li>
+                        <a class="white-text text-lighten-3" href="#!">
+                            More
+                        </a>
+                    </li>
+                </ul>
+            </div>
         </div>
-    {% endfor %}
-</div>
+    </div>
+
+</footer>
+
 </body>
 
 

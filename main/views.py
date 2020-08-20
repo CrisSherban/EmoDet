@@ -21,6 +21,7 @@ def homepage(request):
 
     if request.method == 'POST' and 'record_cam' in request.POST:
         os.system("python AI.py cam")
+        # this return avoids the RePOST after a page refresh
         return HttpResponseRedirect('/')
 
     if request.method == 'POST' and 'record_test' in request.POST:
@@ -40,7 +41,7 @@ def homepage(request):
                            })
 
 
-def info(request):
+def data(request):
     persons = Person.objects.all()
 
     if request.method == 'POST':
@@ -77,20 +78,16 @@ def info(request):
                 persons = persons.filter(person_frame=frame_number)
 
             if len(emotion) != 0:
+                tmp_pers = Person.objects.none()
                 for i in range(len(emotion)):
-                    if i == 0:
-                        if len(emotion) == 1:
-                            persons = persons.filter(person_emotion=str(emotion[i]))
-                        else:
-                            temp_pers = persons.filter(person_emotion=str(emotion[i]))
-                    else:
-                        persons = temp_pers | persons.filter(person_emotion=str(emotion[i]))
+                    tmp_pers |= persons.filter(person_emotion=str(emotion[i]))
+                persons = tmp_pers
 
     else:
         form = PersonForm()
 
     return render(request=request,
-                  template_name="main/info.html",
+                  template_name="main/data.html",
                   context={
                       'persons': persons,
                       'form': form
