@@ -4,8 +4,8 @@ import tflite_runtime.interpreter as tflite
 import pathlib
 import matplotlib.pyplot as plt
 import sys
-
 import os
+
 import django
 from django.utils import timezone
 
@@ -75,8 +75,8 @@ def plot_emotion_probabilities(emotion_lut, scene_mood, frames):
 
     plt.legend()
 
-    plt.savefig(str(pathlib.Path.home()) +
-                "/Desktop/PPM Project/EmoDet/main/pics/graph1.jpg", bbox_inches='tight')
+    plt.savefig(str(pathlib.Path.cwd()) +
+                "/main/pics/graph1.jpg", bbox_inches='tight')
     plt.clf()
     plot1.plot = "graph1.jpg"
     plot1.save()
@@ -92,8 +92,8 @@ def plot_histogram(face_id, all_model_results, ai_prediction_django_model):
     # Set a clean upper y-axis limit.
     plt.ylim(ymax=np.ceil(maxprob / 10) * 10 if maxprob % 10 else maxprob + 10)
 
-    plt.savefig(str(pathlib.Path.home()) +
-                "/Desktop/PPM Project/EmoDet/main/pics/hist"
+    plt.savefig(str(pathlib.Path.cwd()) +
+                "/main/pics/hist"
                 + str(face_id) + ".jpg", bbox_inches='tight')
     plt.clf()
 
@@ -101,7 +101,9 @@ def plot_histogram(face_id, all_model_results, ai_prediction_django_model):
 
 
 def main(argv):
-    home_dir = pathlib.Path.home()
+    np.save("stop", np.array([0]))
+    cur_dir = pathlib.Path.cwd()
+
     if len(argv) != 0:
         if argv[0] == "cam":
             cap = cv2.VideoCapture(0)
@@ -169,7 +171,7 @@ def main(argv):
                 timestamp = timezone.localtime(timezone.now()).time()
 
                 cv2.imwrite(
-                    str(home_dir) + "/Desktop/PPM Project/EmoDet/main/pics/" +
+                    str(cur_dir) + "/main/pics/" +
                     str(face_id) + "_" + str(top_prediction) + "_" + str(timestamp) + ".jpg",
                     image[y:y + h, x:x + w])
 
@@ -217,13 +219,15 @@ def main(argv):
 
             plot_emotion_probabilities(emotion_lut, scene_mood, num_frames)
 
-            print(scene_mood)
+            # print(scene_mood)
 
             cv2.imshow("Faces & Emotions", image)
 
         key = cv2.waitKey(1) & 0xFF
-        # if the `q` key was pressed, break from the loop
-        if key == ord("q"):
+
+        stop = np.load("stop.npy")
+
+        if key == ord("q") or stop[0] == 1:
             cv2.destroyAllWindows()
             break
 

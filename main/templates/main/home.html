@@ -56,9 +56,9 @@
     <li><a class="white-text" href="#">Login</a></li>
 </ul>
 
-<br><br>
 
 <main>
+    <br><br>
     <div class="container center">
         <div class="row flex">
             <div class="col s12">
@@ -84,6 +84,14 @@
                     {% csrf_token %}
                     <button class="btn-large"
                             type="submit" name="purge">Purge Database
+                    </button>
+                </form>
+            </div>
+	    <div class="col s12">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn-large"
+                            type="submit" name="stop">Stop Acquiring
                     </button>
                 </form>
             </div>

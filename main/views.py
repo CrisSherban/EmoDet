@@ -6,6 +6,8 @@ from django.db.models import Q
 from .forms import PersonForm
 import os
 
+import numpy as np
+
 
 def homepage(request):
     def get_latest_faces():
@@ -31,6 +33,12 @@ def homepage(request):
     if request.method == 'POST' and 'purge' in request.POST:
         import purge_data
         purge_data.purge()
+        return HttpResponseRedirect('/')
+
+    if request.method == 'POST' and 'stop' in request.POST:
+        stop = np.array([1])
+        np.save("stop", stop)
+        print("saveeeeeeeeeeeeeeed")
         return HttpResponseRedirect('/')
 
     return render(request=request,

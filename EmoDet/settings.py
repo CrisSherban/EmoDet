@@ -24,7 +24,7 @@ SECRET_KEY = 'gwa9!r+f@iuul6$ms$)1m(m0(1tsp%br*gecn!h9q!93kcuhx5'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '192.168.1.170']
 
 # Application definition
 
@@ -37,8 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'materializecssform',
-    'django_filters',
+    'materializecssform'
 ]
 
 MIDDLEWARE = [
