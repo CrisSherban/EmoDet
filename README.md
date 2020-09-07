@@ -29,7 +29,7 @@ Emotion Detection with TensorFlow Light for RaspberryPi 4 using Python and Djang
     `EmoDet/settings.py`.
   
 #### How to use the server:
-*   Open a browser and type `192.168.1.170:8000`
+*   Open a browser from any device on local network and type `192.168.1.170:8000`
 *   Choose the desired acquisition type
 *   Enjoy
 
