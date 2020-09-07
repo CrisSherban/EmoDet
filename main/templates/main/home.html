@@ -74,6 +74,15 @@
                 <form method="POST">
                     {% csrf_token %}
                     <button class="btn"
+                            type="submit" name="screen">Record with Screen
+                        <i class="material-icons">tv</i>
+                    </button>
+                </form>
+            </div>
+            <div class="col s12">
+                <form method="POST">
+                    {% csrf_token %}
+                    <button class="btn"
                             type="submit" name="record_test">Movie scene TEST
                         <i class="material-icons">movie</i>
                     </button>
@@ -87,7 +96,7 @@
                     </button>
                 </form>
             </div>
-	    <div class="col s12">
+            <div class="col s12">
                 <form method="POST">
                     {% csrf_token %}
                     <button class="btn-large"

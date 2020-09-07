@@ -5,7 +5,8 @@ import pathlib
 import matplotlib.pyplot as plt
 import sys
 import os
-
+from mss import mss
+import pyautogui
 import django
 from django.utils import timezone
 
@@ -101,20 +102,23 @@ def plot_histogram(face_id, all_model_results, ai_prediction_django_model):
 
 
 def main(argv):
-    np.save("stop", np.array([0]))
+
+    np.save("stop", np.array([0]))  # required to stop from host
     cur_dir = pathlib.Path.cwd()
 
     if len(argv) != 0:
         if argv[0] == "cam":
             cap = cv2.VideoCapture(0)
+        elif argv[0] == "screen":
+            screen_width, screen_height = pyautogui.size()
+            cap = None
+            mon = {'top': 0, 'left': 0, 'width': screen_width, 'height': screen_height}
+            sct = mss()
         else:
             cap = cv2.VideoCapture("wws.mp4")
 
     else:
         cap = cv2.VideoCapture("wws.mp4")
-
-    print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    print(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
     emotion_lut = {0: 'anger',
                    1: 'disgust',
@@ -140,11 +144,16 @@ def main(argv):
         face_number_in_frame = 0  # counts the number of faces in each frame
         model_results = [[] for i in range(7)]
         face_detected = False
-        success_reading, image = cap.read()
+        if argv[0] == "screen":
+            image = np.array(sct.grab(mon))
+            image = np.delete(image, obj=3, axis=2)
+            success_reading = True
+        else:
+            success_reading, image = cap.read()
         num_frames += 1
 
         if success_reading:
-            img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            img_gray = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
 
             # detect faces in our gray picture
             faces = face_detect.detectMultiScale(img_gray,
@@ -231,7 +240,8 @@ def main(argv):
             cv2.destroyAllWindows()
             break
 
-    cap.release()
+    if cap is not None:
+        cap.release()
 
 
 if __name__ == "__main__":

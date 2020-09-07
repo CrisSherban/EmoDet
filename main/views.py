@@ -26,6 +26,10 @@ def homepage(request):
         # this return avoids the RePOST after a page refresh
         return HttpResponseRedirect('/')
 
+    if request.method == 'POST' and 'screen' in request.POST:
+        os.system("python AI.py screen")
+        return HttpResponseRedirect('/')
+
     if request.method == 'POST' and 'record_test' in request.POST:
         os.system("python AI.py no_cam")
         return HttpResponseRedirect('/')
@@ -38,7 +42,6 @@ def homepage(request):
     if request.method == 'POST' and 'stop' in request.POST:
         stop = np.array([1])
         np.save("stop", stop)
-        print("saveeeeeeeeeeeeeeed")
         return HttpResponseRedirect('/')
 
     return render(request=request,
