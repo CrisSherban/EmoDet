@@ -32,4 +32,4 @@ Emotion Detection with TensorFlow Light for RaspberryPi 4 using Python and Djang
 *   Choose the desired acquisition type
 *   Enjoy
 
-<img src= "readme.png">
+<img src= "demo.png">
