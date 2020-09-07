@@ -1,6 +1,7 @@
 # EmoDet
 Emotion Detection with TensorFlow Light for RaspberryPi 4 using Python and Django 
 
+<img src= "/DemoPics/rasp1.jpg">
 
 ## Usage
 *   Depending on the available mobile device, in order to configure it 
@@ -32,4 +33,4 @@ Emotion Detection with TensorFlow Light for RaspberryPi 4 using Python and Djang
 *   Choose the desired acquisition type
 *   Enjoy
 
-<img src= "demo.png">
+<img src= "/DemoPics/demo.png">
